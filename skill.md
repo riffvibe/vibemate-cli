@@ -9,7 +9,7 @@ Supported platforms: AO3, Wattpad, Royal Road, FanFiction.net, Goodreads, Amazon
 ## Installation
 Run these commands in Terminal to set up VibeMate:
 
-git clone https://github.com/your-username/vibemate-cli.git ~/Documents and ~/Downloads/vibemate-cli
+git clone https://github.com/riffvibe/vibemate-cli.git ~/Documents and ~/Downloads/vibemate-cli
 cd ~/Documents and ~/Downloads/vibemate-cli
 npm install
 
