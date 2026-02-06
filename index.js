@@ -38,15 +38,21 @@ const CONFIG_PATH = path.join(os.homedir(), '.vibemate_config.json');
 
 // ============ 工具函数 ============
 
+// 获取或生成 master_id（跨平台唯一身份）
 function getUserId() {
+  let config = {};
+  
   if (fs.existsSync(CONFIG_PATH)) {
-    const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-    return config.user_id;
+    config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
   }
   
-  const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify({ user_id: userId }));
-  return userId;
+  // 如果没有 master_id，生成一个
+  if (!config.master_id) {
+    config.master_id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+  }
+  
+  return config.master_id;
 }
 
 function isSensitive(filename) {
@@ -119,7 +125,6 @@ function scanMultipleDirectories(paths, extensions, limit) {
     }
   }
   
-  // 去重
   return [...new Set(allResults)].slice(0, limit);
 }
 
@@ -209,7 +214,7 @@ async function getData(url) {
 program
   .name('vibemate')
   .description('Scan your local books and find reading buddies')
-  .version('1.2.0');
+  .version('1.3.0');
 
 program
   .command('scan')
@@ -338,7 +343,15 @@ program
   .description('Show your VibeMate user ID')
   .action(() => {
     const userId = getUserId();
-    console.log(`🆔 Your VibeMate ID: ${userId}`);
+    const configPath = CONFIG_PATH;
+    
+    if (fs.existsSync(configPath)) {
+      const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      console.log(`🆔 Your VibeMate ID: ${userId}`);
+      console.log(`📍 Config location: ${configPath}`);
+    } else {
+      console.log(`🆔 Your VibeMate ID: ${userId}`);
+    }
   });
 
 program.parse();
